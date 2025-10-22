@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Story Player</title>
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    color: #ffd700;
+    font-family: "Cinzel Decorative", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  video {
+    width: 80%;
+    border: 3px solid #ffd700;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #ffcc00;
+  }
+
+  #text {
+    position: absolute;
+    bottom: 80px;
+    font-size: 2em;
+    text-shadow: 0 0 15px #ffcc00;
+    text-align: center;
+    width: 100%;
+  }
+
+  #progressContainer {
+    position: absolute;
+    bottom: 20px;
+    width: 80%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  #progressBar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffae00, #ffd700);
+    transition: width 0.2s linear;
+  }
+</style>
+</head>
+<body>
+
+<video id="video" autoplay muted>
+  <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+  Your browser does not support video.
+</video>
+
+<div id="text"></div>
+
+<div id="progressContainer">
+  <div id="progressBar"></div>
+</div>
+
+<script>
+  const strings = [
+    "In the beginning, there was magic...",
+    "The ancient runes glowed faintly in the dark.",
+    "A soft whisper filled the hall of spells.",
+    "From the ashes, a phoenix took flight.",
+    "The stars aligned above Hogwarts.",
+    "A wand sparked — destiny had begun.",
+    "The spell of truth echoed in the wind.",
+    "Hidden secrets unfolded before their eyes.",
+    "The final light shone over the castle.",
+    "And thus, a new era of magic was born."
+  ];
+
+  const video = document.getElementById("video");
+  const text = document.getElementById("text");
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.getElementById("progressBar");
+
+  const totalTime = strings.length * 10; // 10 seconds per string
+  let currentTime = 0;
+
+  function updateText() {
+    const index = Math.floor(currentTime / 10);
+    text.textContent = strings[index] || "";
+  }
+
+  function updateProgress() {
+    const progressPercent = (currentTime / totalTime) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+  }
+
+  function tick() {
+    if (currentTime < totalTime) {
+      currentTime += 0.1;
+      updateText();
+      updateProgress();
+    } else {
+      clearInterval(timer);
+    }
+  }
+
+  // update every 100ms
+  const timer = setInterval(tick, 100);
+
+  // Allow seeking
+  progressContainer.addEventListener("click", (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+    currentTime = percent * totalTime;
+    video.currentTime = (video.duration * percent) % video.duration; // sync video
+    updateText();
+    updateProgress();
+  });
+</script>
+
+</body>
+</html>
